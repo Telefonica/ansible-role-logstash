@@ -37,11 +37,6 @@ To generate a self-signed certificate/key pair, you can use use the command:
 
 Note that filebeat and logstash may not work correctly with self-signed certificates unless you also have the full chain of trust (including the Certificate Authority for your self-signed cert) added on your server. See: https://github.com/elastic/logstash/issues/4926#issuecomment-203936891
 
-    logstash_local_syslog_path: /var/log/syslog
-    logstash_monitor_local_syslog: true
-
-Whether configuration for local syslog file (defined as `logstash_local_syslog_path`) should be added to logstash. Set this to `false` if you are monitoring the local syslog differently, or if you don't care about the local syslog file. Other local logs can be added by your own configuration files placed inside `/etc/logstash/conf.d`.
-
     logstash_enabled_on_boot: yes
 
 Set this to `no` if you don't want logstash to run on system startup.
@@ -50,6 +45,24 @@ Set this to `no` if you don't want logstash to run on system startup.
       - logstash-input-beats
 
 A list of Logstash plugins that should be installed.
+
+To config the inputs, filters and outpus:
+
+       inputs: |
+           beats {
+             port => 5044
+             codec => json
+           }
+       filters: |
+             mutate {
+               remove_field => [ "salt" ]
+             }
+       outputs: |
+             elasticsearch {
+               hosts => {{logstash_elasticsearch_hosts}}
+               index => "%{[@metadata][beat]}-%{+YYYY.MM.dd}"
+               document_type => "%{[@metadata][type]}"
+             }
 
 ## Other Notes
 
