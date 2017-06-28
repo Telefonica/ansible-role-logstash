@@ -1,5 +1,17 @@
 ---
-- name: Create Logstash configuration files.
+- name: List files of /etc/logstash/conf.d/
+  shell: >
+    ls -1 /etc/logstash/conf.d/
+  register: files
+
+- name: Remove files except specified
+  file:
+    path: "/etc/logstash/conf.d/{{ item }}"
+    state: absent
+  with_items: "{{files.stdout_lines}}"
+  when: item not in list_of_files_to_keep
+
+- name: Create Logstash input configuration files.
   template:
     src: "{{ item }}.j2"
     dest: "/etc/logstash/conf.d/{{ item }}"
@@ -7,38 +19,30 @@
     group: root
     mode: 0644
   with_items:
-    - 01-beats-input.conf
-    - 30-elasticsearch-output.conf
+    - 01-inputs.conf
   notify: restart logstash
+  when: inputs is defined
 
-#- name: Create Logstash filters.
-#  copy:
-#    src: "filters/{{ item }}"
-#    dest: "/etc/logstash/conf.d/{{ item }}"
-#    owner: root
-#    group: root
-#    mode: 0644
-#  with_items:
-#    - 10-syslog.conf
-#    - 11-nginx.conf
-#    - 12-apache.conf
-#    - 14-solr.conf
-#    - 15-drupal.conf
-#  notify: restart logstash
-
-- name: Create Logstash configuration file for local syslog.
+- name: Create Logstash filters configuration files.
   template:
-    src: 02-local-syslog-input.conf.j2
-    dest: /etc/logstash/conf.d/02-local-syslog-input.conf
+    src: "{{ item }}.j2"
+    dest: "/etc/logstash/conf.d/{{ item }}"
     owner: root
     group: root
     mode: 0644
-  when: logstash_monitor_local_syslog
+  with_items:
+    - 02-filters.conf
   notify: restart logstash
+  when: filters is defined
 
-- name: Ensure configuration for local syslog is absent if disabled.
-  file:
-    path: /etc/logstash/conf.d/02-local-syslog-input.conf
-    state: absent
-  when: not logstash_monitor_local_syslog
+- name: Create Logstash outputs configuration files.
+  template:
+    src: "{{ item }}.j2"
+    dest: "/etc/logstash/conf.d/{{ item }}"
+    owner: root
+    group: root
+    mode: 0644
+  with_items:
+    - 03-outputs.conf
   notify: restart logstash
+  when: outputs is defined

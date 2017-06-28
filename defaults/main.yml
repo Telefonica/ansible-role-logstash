@@ -5,7 +5,6 @@ logstash_elasticsearch_hosts:
   - http://localhost:9200
 
 logstash_local_syslog_path: /var/log/syslog
-logstash_monitor_local_syslog: true
 
 logstash_ssl_dir: /etc/pki/logstash
 logstash_ssl_certificate_file: ""
@@ -15,3 +14,8 @@ logstash_enabled_on_boot: yes
 
 logstash_install_plugins:
   - logstash-input-beats
+
+list_of_files_to_keep:
+  - 01-inputs.conf
+  - 02-filters.conf
+  - 03-outputs.conf
