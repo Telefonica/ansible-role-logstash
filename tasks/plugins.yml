@@ -13,3 +13,11 @@
   with_items: "{{ logstash_install_plugins }}"
   when: "item not in logstash_plugins_list.stdout"
   notify: restart logstash
+
+- name: Install configured LOCAL plugins (you have to upload previously the file).
+  command: >
+    ./bin/logstash-plugin install file://{{ item.file }}
+    chdir=/usr/share/logstash
+  with_items: "{{ logstash_install_local_plugins }}"
+  when: "item.name not in logstash_plugins_list.stdout"
+  notify: restart logstash

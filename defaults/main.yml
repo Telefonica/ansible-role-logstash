@@ -17,6 +17,8 @@ logstash_enabled_on_boot: yes
 logstash_install_plugins:
   - logstash-input-beats
 
+logstash_install_local_plugins: []
+
 list_of_files_to_keep:
   - 01-inputs.conf
   - 02-filters.conf

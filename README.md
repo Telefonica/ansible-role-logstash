@@ -46,6 +46,11 @@ Set this to `no` if you don't want logstash to run on system startup.
 
 A list of Logstash plugins that should be installed.
 
+    logstash_install_local_plugins:
+      - { name: logstash-input-beats, file: /tmp/logstash-offline-plugins-5.4.2.zip
+
+A list of Logstash plugins pack that should be installed. If the pack contains several plugins the name should be one of them to check with the installed plugin list and avoid this task in that case. The pack has to be in the location before use this role
+
 To config the inputs, filters and outpus:
 
        inputs: |
