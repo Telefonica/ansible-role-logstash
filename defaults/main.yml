@@ -1,5 +1,6 @@
 ---
 logstash_version: 5.4.2
+ls_major_version: "5.x"
 
 logstash_listen_port_beats: 5044
 
