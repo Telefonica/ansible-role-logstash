@@ -2,6 +2,9 @@
 logstash_version: 5.4.2
 ls_major_version: "5.x"
 
+ls_java_install: true
+update_java: false
+
 logstash_listen_port_beats: 5044
 
 logstash_elasticsearch_hosts:
