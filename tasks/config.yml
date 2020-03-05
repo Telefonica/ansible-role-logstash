@@ -11,6 +11,15 @@
   with_items: "{{files.stdout_lines}}"
   when: item not in list_of_files_to_keep
 
+- name: Copy Logstash configuration file.
+  copy:
+    src: "logstash.yml"
+    dest: "/etc/logstash/logstash.yml"
+    owner: root
+    group: root
+    mode: 0644
+  notify: restart logstash
+
 - name: Create Logstash input configuration files.
   template:
     src: "{{ item }}.j2"
