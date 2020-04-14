@@ -19,25 +19,16 @@
     group: root
     mode: 0644
 
+# Generate Avro Schema files based on variables passed through "logstash.avsc".
 - name: Generate Avro Schema file.
-  blockinfile:
-    path: "/etc/logstash/avro-schema.avsc"
-    create: yes
+  copy:
+    content: "{{ item | to_nice_json }}"
+    dest: "/etc/logstash/{{ item.name }}.avsc"
     owner: root
     group: root
     mode: 0644
-    block: |
-      {
-        "name": "MH-BI_events",
-        "type": "record",
-        "namespace": "com.plainAVRO",
-        "fields": [
-          {
-            "name": "message",
-            "type": "string"
-          }
-        ]
-      }
+  when: logstash.avsc is defined
+  with_items: "{{ logstash.avsc }}"
   notify: restart logstash
 
 - name: Create Logstash input configuration files.
