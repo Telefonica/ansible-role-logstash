@@ -18,6 +18,26 @@
     owner: root
     group: root
     mode: 0644
+
+- name: Generate Avro Schema file.
+  blockinfile:
+    path: "/etc/logstash/avro-schema.avsc"
+    create: yes
+    owner: root
+    group: root
+    mode: 0644
+    block: |
+      {
+        "name": "MH-BI_events",
+        "type": "record",
+        "namespace": "com.plainAVRO",
+        "fields": [
+          {
+            "name": "message",
+            "type": "string"
+          }
+        ]
+      }
   notify: restart logstash
 
 - name: Create Logstash input configuration files.
