@@ -18,6 +18,17 @@
     owner: root
     group: root
     mode: 0644
+
+# Generate Avro Schema files based on variables passed through "logstash.avsc".
+- name: Generate Avro Schema file.
+  copy:
+    content: "{{ item | to_nice_json }}"
+    dest: "/etc/logstash/{{ item.name }}.avsc"
+    owner: root
+    group: root
+    mode: 0644
+  when: logstash.avsc is defined
+  with_items: "{{ logstash.avsc }}"
   notify: restart logstash
 
 - name: Create Logstash input configuration files.
